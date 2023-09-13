@@ -12,7 +12,7 @@ let obj = JSON.parse(body);
 if (url.indexOf(path) != -1) {
     obj["expired"] = 0;
 	obj["expiredTime"] = 2998743249;
-	obj["remainTime"] = 189302400;
+	obj["remainTime"] = 2998743249;
 	obj["isPaying"] = 1;
 	body = JSON.stringify(obj);
  }
