@@ -321,6 +321,7 @@ function setReqOpts(method, _360buy_param_json) {
 
     if (platformType === 'WeChat-MiniApp') {
       result = response;
+      console.log(result);
       if (result.code !== 200) {
         $.desc = result.message;
         $.msg($.name, $.subt, $.desc);
@@ -354,7 +355,7 @@ function setReqOpts(method, _360buy_param_json) {
       linkResult = JSON.parse(
         $.linkData.jd_union_open_promotion_common_get_responce.getResult
       );
-
+      console.log(result);
       if (result.code !== 200 || result.data.length === 0) {
         $.subt = `点击前往：${$.openUrl}`;
         $.desc = result.message;
