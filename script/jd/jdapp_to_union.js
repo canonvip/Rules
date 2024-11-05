@@ -2,8 +2,8 @@
 [rewrite_local]
 # 京东、京东极速、京喜
 # 商品id获取, 查看商品详情触发通知
-https:\/\/.+\.jd\.com\/graphext\/draw\?sku=(\d+).* url script-request-header https://raw.githubusercontent.com/canonvip/Rules/refs/heads/main/script/jd/jdapp_to_union.js
-https:\/\/.+\.jd\.com\/product\/.*\/(\d+)\.html url script-request-header https://raw.githubusercontent.com/canonvip/Rules/refs/heads/main/script/jd/jdapp_to_union.js
+https:\/\/.+\.jd\.com\/graphext\/draw\?sku=(\d+).* url script-request-header https://raw.githubusercontent.com/id77/QuantumultX/master/Script/jdapp_to_union.js
+https:\/\/.+\.jd\.com\/product\/.*\/(\d+)\.html url script-request-header https://raw.githubusercontent.com/id77/QuantumultX/master/Script/jdapp_to_union.js
 [mitm]
 hostname = *.jd.com, *.*.jd.com
 */
@@ -16,6 +16,7 @@ const siteId = $.getData('id77_JDLM_siteId'); // 网站或APP的ID
 const app_key = $.getData('id77_JDLM_app_key'); // 网站或APP的 app_key
 const appSecret = $.getData('id77_JDLM_appSecret'); // 网站或APP的 appSecret
 const diyApi = $.getData('id77_JDLM_diy_api'); // 自建服务
+const schemeFlag = $.getData('id77_JDLM_no_schema'); // 禁止scheme跳转
 const diyCopy = $.getData('id77_JDLM_copy'); // copy  文案
 
 $.log(`🔗捕获：\n${$request.url}`);
@@ -35,11 +36,13 @@ if (url.includes('graphext/draw')) {
   arr = url.match(/\/.*\/(\d+)\.html/);
 }
 
-sku = arr[1];
+if (arr?.length) {
+  sku = arr[1];
+}
 
 $.log(`👾SKU：${sku}`);
 
-const msgOpts = JSON.parse($.getData('id77_JDMsgOpts_Cache')) || {};
+const msgOpts = JSON.parse($.getData('id77_JDMsgOpts_Cache') || '{}');
 if ($.getData('id77_JDSkuId_Cache') === sku && msgOpts.openUrl) {
   let appSchemeName = '';
 
@@ -218,6 +221,8 @@ function setReqOpts(method, _360buy_param_json) {
               diyData.promotionUrl ||
               diyData.originalContext,
       };
+      if (schemeFlag === 'Y') delete $.msgOpts.openUrl;
+
       $.setData($.subt, 'id77_JDSubt_Cache');
       $.setData($.desc, 'id77_JDDesc_Cache');
       $.setData(JSON.stringify($.msgOpts), 'id77_JDMsgOpts_Cache');
@@ -321,7 +326,6 @@ function setReqOpts(method, _360buy_param_json) {
 
     if (platformType === 'WeChat-MiniApp') {
       result = response;
-      console.log(result);
       if (result.code !== 200) {
         $.desc = result.message;
         $.msg($.name, $.subt, $.desc);
@@ -355,7 +359,7 @@ function setReqOpts(method, _360buy_param_json) {
       linkResult = JSON.parse(
         $.linkData.jd_union_open_promotion_common_get_responce.getResult
       );
-      console.log(result);
+
       if (result.code !== 200 || result.data.length === 0) {
         $.subt = `点击前往：${$.openUrl}`;
         $.desc = result.message;
@@ -409,6 +413,8 @@ function setReqOpts(method, _360buy_param_json) {
           : $.convertedLink ||
             `https://item.jd.com/${skuId}.html?${Math.random()}`,
     };
+    if (schemeFlag === 'Y') delete $.msgOpts.openUrl;
+
     $.setData($.subt, 'id77_JDSubt_Cache');
     $.setData($.desc, 'id77_JDDesc_Cache');
     $.setData(JSON.stringify($.msgOpts), 'id77_JDMsgOpts_Cache');
@@ -423,7 +429,7 @@ function setReqOpts(method, _360buy_param_json) {
 
 function setScheme(url) {
   const params = encodeURIComponent(
-    `{"category":"jump","des":"m","keplerID":"jd20170713smzdm","url":"${url}"}`
+    `{"category":"jump","des":"m","url":"${url}"}`
   );
 
   if (appType === 'jdapp') {
@@ -816,9 +822,9 @@ function Env(name, opts) {
     post(opts, callback = () => {}) {
       const method = opts.method ? opts.method.toLocaleLowerCase() : 'post';
       // 如果指定了请求体, 但没指定`Content-Type`, 则自动生成
-      if (opts.body && opts.headers && !opts.headers['Content-Type']) {
-        opts.headers['Content-Type'] = 'application/x-www-form-urlencoded';
-      }
+      // if (opts.body && // opts.headers && !opts.headers['Content-Type']) {
+        // opts.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+      //  }
       if (opts.headers) delete opts.headers['Content-Length'];
       if (this.isSurge() || this.isLoon()) {
         if (this.isSurge() && this.isNeedRewrite) {
