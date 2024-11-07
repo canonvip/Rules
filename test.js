@@ -36,10 +36,13 @@ if (arr?.length) {
 // 输出获取到的 SKU 信息
 console.log(`👾 SKU：${sku}`);
 
+// 拼接成商品链接
+let productLink = `https://item.m.jd.com/product/${sku}.html`;
+
 // 示例，发送通知或进一步处理
 if (sku) {
     // 如果成功获取到 SKU，可以进行后续处理
-    $notify('捕获到商品 SKU', '', `商品 SKU：${sku}`);
+    $notify('捕获到商品 SKU', '', `商品链接：${productLink}`);
 } else {
     // 如果未获取到 SKU，可以提示用户
     $notify('未能获取 SKU', '', '无法解析商品 SKU');
