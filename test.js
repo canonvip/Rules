@@ -8,7 +8,7 @@ https:\/\/.+\.jd\.com\/product\/.*\/(\d+)\.html url script-request-header https:
 hostname = *.jd.com, *.*.jd.com
 */
 // 输出捕获的请求 URL
-$.log(`🔗 捕获：\n${$request.url}`);
+console.log(`🔗 捕获：\n${$request.url}`);
 
 const url = $request.url.replace(/https?:\/\//g, '');  // 去掉 URL 中的协议部分（http:// 或 https://）
 const UA = $request.headers['User-Agent'] || $request.headers['user-agent'];  // 获取请求头中的 User-Agent
@@ -36,7 +36,7 @@ if (arr?.length) {
 }
 
 // 输出获取到的 SKU 信息
-$.log(`👾 SKU：${sku}`);
+console.log(`👾 SKU：${sku}`);
 
 // 示例，发送通知或进一步处理
 if (sku) {
