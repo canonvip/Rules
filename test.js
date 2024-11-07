@@ -9,9 +9,10 @@ https:\/\/.+\.jd\.com\/product\/.*\/(\d+)\.html url script-request-header https:
 hostname = *.jd.com, *.*.jd.com
 */
 
-const AppId = $.getData('shine_jingPinKU_AppId');
-const AppKey = $.getData('shine_jingPinKU_AppKey');
-const UnionId = $.getData('shine_jingPinKU_UnionId');
+// 获取 AppId、AppKey 和 UnionId
+const AppId = getData('shine_jingPinKU_AppId');
+const AppKey = getData('shine_jingPinKU_AppKey');
+const UnionId = getData('shine_jingPinKU_UnionId');
 
 // 获取返利链接的函数
 function getRebateLink(contentStr, callback) {
