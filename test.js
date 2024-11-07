@@ -1,4 +1,4 @@
-/* 
+/*
 [rewrite_local]
 # 京东、京东极速、京喜
 # 商品id获取, 查看商品详情触发通知
@@ -9,34 +9,20 @@ https:\/\/.+\.jd\.com\/product\/.*\/(\d+)\.html url script-request-header https:
 hostname = *.jd.com, *.*.jd.com
 */
 
-// 配置类（替换 Python 中的 Config 类）
-const Config = {
-    AppId: "your-app-id",     // 替换为实际的 AppId
-    AppKey: "your-app-key",    // 替换为实际的 AppKey
-    UnionId: "your-union-id"   // 替换为实际的 UnionId
-};
+const AppId = $.getData('shine_jingPinKU_AppId');
+const AppKey = $.getData('shine_jingPinKU_AppKey');
+const UnionId = $.getData('shine_jingPinKU_UnionId');
 
-// RebateLink 类（替换 Python 中的 RebateLink 类）
-class RebateLink {
-    constructor(code = 0, content = "", images = [], official = "") {
-        this.code = code;
-        this.content = content;
-        this.images = images;
-        this.official = official;
-    }
-}
-
-// 获取返利链接
+// 获取返利链接的函数
 function getRebateLink(contentStr, callback) {
     const url = "https://api.jingpinku.com/get_powerful_coup_link/api";
     const params = {
-        appid: Config.AppId,
-        appkey: Config.AppKey,
-        union_id: Config.UnionId,
+        appid: AppId,
+        appkey: AppKey,
+        union_id: UnionId,
         content: contentStr
     };
 
-    // 使用 Quantumult X 的 $httpClient.get 发送请求
     $httpClient.get({ url: url, params: params }, function(error, response, data) {
         if (error) {
             console.error("请求失败", error);
@@ -44,13 +30,12 @@ function getRebateLink(contentStr, callback) {
         } else {
             try {
                 const jsonData = JSON.parse(data);
-                const rebateLink = new RebateLink(
-                    jsonData.code || 0,
-                    jsonData.content || "",
-                    jsonData.images || [],
-                    jsonData.official || ""
-                );
-                callback(rebateLink);
+                callback({
+                    code: jsonData.code || 0,
+                    content: jsonData.content || "",
+                    images: jsonData.images || [],
+                    official: jsonData.official || ""
+                });
             } catch (e) {
                 console.error("解析返回数据失败", e);
                 callback(null);
@@ -79,34 +64,28 @@ if (url.includes('graphext/draw')) {
 }
 
 // 如果成功匹配到 SKU，保存其值
-if (arr?.length) {
+if (arr) {
     sku = arr[1];
 }
 
 // 输出获取到的 SKU 信息
 console.log(`👾 SKU：${sku}`);
 
-// 拼接成商品链接
-let productLink = `https://item.m.jd.com/product/${sku}.html`;
+let productLink = sku ? `https://item.m.jd.com/product/${sku}.html` : '未找到商品链接';
 
 // 获取返利链接
 if (sku) {
     getRebateLink(sku, function(rebateLink) {
-        if (rebateLink) {
-            let msg = rebateLink.content || "暂无商品信息";
-            if (rebateLink.official) {
-                msg = rebateLink.official;
-            }
-            // 发送通知
-            $notify('捕获到商品 SKU', '', `商品链接：${productLink}\n返利信息：${msg}`);
-        } else {
-            // 如果没有返利信息，则只显示商品链接
-            $notify('捕获到商品 SKU', '', `商品链接：${productLink}\n未找到返利信息`);
+        let msg = rebateLink ? rebateLink.content || "暂无商品信息" : "未能获取返利信息";
+        if (rebateLink && rebateLink.official) {
+            msg = rebateLink.official;
         }
-        $done(); // 确保脚本结束
+        // 发送通知
+        $notify('捕获到商品 SKU', '', `商品链接：${productLink}\n返利信息：${msg}`);
+        $done();
     });
 } else {
     // 如果未获取到 SKU，可以提示用户
     $notify('未能获取 SKU', '', '无法解析商品 SKU');
-    $done(); // 确保脚本结束
+    $done();
 }
