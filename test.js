@@ -39,21 +39,19 @@ if (arr && arr[1]) {
 }
 
 let productLink = sku ? `https://item.m.jd.com/product/${sku}.html` : '';
-
-// 示例，发送通知或进一步处理
+console.log("生成的商品链接：", productLink);
 if (sku) {
-    $notify('捕获到商品 SKU', '', `商品链接：${productLink}`);
+    console.log("捕获到商品 SKU，准备调用 getRebateLink...");
+    getRebateLink(productLink, function(result) {
+        if (result) {
+            console.log("获取优惠链接成功，返回的数据：", result);
+        } else {
+            console.log("未能获取到优惠链接");
+        }
+    });
 } else {
-    $notify('未能获取 SKU', '', '无法解析商品 SKU');
+    console.log("未能获取到 SKU，跳过 getRebateLink 调用");
 }
-getRebateLink(productLink, function(result) {
-    if (result) {
-        console.log("优惠链接数据：", result);
-        // 你可以在这里根据返回的 result 继续处理或通知用户
-    } else {
-        console.log("未能获取到优惠链接");
-    }
-});
 
 function getRebateLink(contentStr, callback) {
     // 校验必要参数
