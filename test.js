@@ -8,7 +8,7 @@ https:\/\/.+\.jd\.com\/product\/.*\/(\d+)\.html url script-request-header https:
 [mitm]
 hostname = *.jd.com, *.*.jd.com
 */
-const chen = new Env('')//init()
+// const chen = new Env('')//init()
 // 获取 AppId、AppKey 和 UnionId
 // const AppId = chen.getdata('shine_jingPinKU_AppId');
 // const AppKey = chen.getdata('shine_jingPinKU_AppKey');
