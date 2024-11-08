@@ -48,10 +48,11 @@ function getRebateLink(productLink) {
         }
 
         if (error) {
-            console.log(error)
+            console.log(error);
             chen.done();
             return;
         }
+
         if (response && response.statusCode !== 200) {
             chen.done();
             return;
@@ -61,11 +62,21 @@ function getRebateLink(productLink) {
             const result = JSON.parse(data);
             if (result && result.content && result.official) {
                 const rebateLink = result.content;
-                const commissionMatch = result.official.match(/佣金：([\d.]+)/);
+                
+                // 提取京东价和佣金
+                const officialInfo = result.official;
+                const priceMatch = officialInfo.match(/京东价：([\d.]+)/);
+                const commissionMatch = officialInfo.match(/佣金：([\d.]+)/);
 
-                if (commissionMatch && commissionMatch[1]) {
-                    const commission = commissionMatch[1];
-                    const finalOutput = `优惠链接: ${rebateLink}\n💵佣金: ${commission}`;
+                if (priceMatch && commissionMatch) {
+                    const price = parseFloat(priceMatch[1]);
+                    const commission = parseFloat(commissionMatch[1]);
+
+                    // 计算佣金比例
+                    const commissionRate = (commission / price) * 100; // 佣金比例 (百分比)
+
+                    // 生成输出文本
+                    const finalOutput = `优惠链接: ${rebateLink}\n💵京东价: ${price}元\n💵佣金: ${commission}元\n💰佣金比例: ${commissionRate.toFixed(2)}%`;
 
                     // 构建 openjd 链接
                     const openjdParams = {
@@ -83,13 +94,13 @@ function getRebateLink(productLink) {
                     // 发送通知，并带上 JD App 的跳转链接
                     chen.msg("京东优惠信息", "", finalOutput, { "open-url": jdAppLink });
                 } else {
-                    chen.msg("未返回佣金信息", "", "");
+                    chen.msg("未能获取到价格或佣金信息", "", "");
                 }
             } else {
                 chen.msg("未返回佣金信息", "", "");
             }
         } catch (e) {
-             console.log(e)
+            console.log(e);
         } finally {
             chen.done();
         }
