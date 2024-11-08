@@ -33,30 +33,18 @@ if (arr && arr[1]) {
     console.log('👾 未能匹配到 SKU');
 }
 let productLink = sku ? `https://item.m.jd.com/product/${sku}.html` : '';
-console.log(`生成的商品链接：${productLink}`);
+// console.log(`生成的商品链接：${productLink}`);
 if (productLink) {
     getRebateLink(productLink);  // 调用异步函数获取优惠链接
 } else {
     console.log("商品链接为空，无法调用 getRebateLink");
     $done();
 }
-// 异步获取优惠链接的函数
+
 function getRebateLink(productLink) {
-    // 构建 API 请求的 URL
     let apiUrl = `https://api.jingpinku.com/get_powerful_coup_link/api?appid=${AppId}&appkey=${AppKey}&union_id=${UnionId}&content=${encodeURIComponent(productLink)}`;
 
-    console.log(`调用 getRebateLink，商品链接为: ${productLink}`);
-    console.log(`完整的API请求URL: ${apiUrl}`);
-
-    // 发送GET请求
     chen.get({ url: apiUrl }, (error, response, data) => {
-        // 打印请求的响应状态码
-        console.log(`API 请求完成，状态码：${response ? response.statusCode : "未知"}`);
-        
-        // 打印请求的返回数据
-        console.log(`API 返回的数据: ${data}`);
-
-        // 如果未进入回调，打印错误
         if (!data) {
             console.error('未收到响应数据');
             chen.msg("获取优惠链接失败", "", "未收到响应数据");
@@ -64,7 +52,6 @@ function getRebateLink(productLink) {
             return;
         }
 
-        // 处理请求失败的情况
         if (error) {
             console.error(`请求失败: ${error}`);
             chen.msg("获取优惠链接失败", "", `错误信息: ${error}`);
@@ -72,7 +59,6 @@ function getRebateLink(productLink) {
             return;
         }
 
-        // 如果响应状态码不是200，处理错误
         if (response && response.statusCode !== 200) {
             console.error(`HTTP 错误：${response.statusCode} ${response.status}`);
             chen.msg("获取优惠链接失败", "", `HTTP 错误：${response.statusCode} ${response.status}`);
@@ -80,26 +66,27 @@ function getRebateLink(productLink) {
             return;
         }
 
-        // 输出原始返回数据
-        console.log(`getRebateLink 原始返回数据: ${JSON.stringify(data)}`);
-
-        // 解析返回数据
         try {
             const result = JSON.parse(data);
-            console.log("解析后的返回数据:", result);
-            // 在这里处理返回的结果（例如提取优惠链接）
-            if (result && result.rebateLink) {
-                console.log(`优惠链接: ${result.rebateLink}`);
-                // 执行你需要的后续操作，比如发送优惠链接通知
+            if (result && result.content && result.official) {
+                const rebateLink = result.content;
+                const commissionMatch = result.official.match(/佣金：([\d.]+)/);
+
+                if (commissionMatch && commissionMatch[1]) {
+                    const commission = commissionMatch[1];
+                    const finalOutput = `优惠链接: ${rebateLink}\n佣金: ${commission}`;
+                    chen.msg("京东优惠信息", "", finalOutput, { "open-url": rebateLink });
+                } else {
+                    chen.msg("获取优惠信息失败", "", "未能从 official 字段提取佣金信息");
+                }
             } else {
-                console.error("返回的数据中未找到优惠链接");
-                chen.msg("获取优惠链接失败", "", "返回的数据中未找到优惠链接");
+                chen.msg("获取优惠信息失败", "", "返回的数据中缺少 content 或 official 字段");
             }
         } catch (e) {
             console.error(`解析返回数据失败: ${e.message}`);
             chen.msg("获取优惠链接失败", "", `解析返回数据失败: ${e.message}`);
         } finally {
-            chen.done(); // 确保无论如何都调用 $done()
+            chen.done();
         }
     });
 }
