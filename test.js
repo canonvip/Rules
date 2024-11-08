@@ -33,7 +33,7 @@ if (url.includes('graphext/draw')) {
 
 if (arr && arr[1]) {
     sku = arr[1];
-    console.log(`👾 SKU：${sku}`);
+    // console.log(`👾 SKU：${sku}`);
 } else {
     console.log('👾 未能匹配到 SKU');
 }
@@ -46,7 +46,6 @@ if (sku) {
 } else {
     $notify('未能获取 SKU', '', '无法解析商品 SKU');
 }
-
 getRebateLink(productLink, function(result) {
     if (result) {
         console.log("优惠链接数据：", result);
