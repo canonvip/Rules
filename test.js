@@ -10,9 +10,9 @@ hostname = *.jd.com, *.*.jd.com
 */
 const chen = new Env('')//init()
 // 获取 AppId、AppKey 和 UnionId
-const AppId = chen.getdata('shine_jingPinKu_AppId');
-const AppKey = chen.getdata('shine_jingPinKu_AppKey');
-const UnionId = chen.getdata('shine_jingPinKu_UnionId');
+const AppId = chen.getdata('AppId');
+const AppKey = chen.getdata('AppKey');
+const UnionId = chen.getdata('UnionId');
 $notify('捕获到AppId', '', `AppId：${AppId}`);
 $notify('捕获到AppKey', '', `AppKey：${AppKey}`);
 $notify('捕获到UnionId', '', `UnionId：${UnionId}`);
