@@ -13,9 +13,10 @@ const chen = new Env('')//init()
 const AppId = chen.getdata('shine_jingPinKu_AppId');
 const AppKey = chen.getdata('shine_jingPinKu_AppKey');
 const UnionId = chen.getdata('shine_jingPinKu_UnionId');
-console.log(`👾 AppId：${AppId}`);
-console.log(`👾 AppKey：${AppKey}`)
-console.log(`👾 UnionId：${UnionId}`)
+$notify('捕获到AppId', '', `AppId：${AppId}`);
+$notify('捕获到AppKey', '', `AppKey：${AppKey}`);
+$notify('捕获到UnionId', '', `UnionId：${UnionId}`);
+
 // 输出捕获的请求 URL
 console.log(`🔗 捕获：\n${$request.url}`);
 
