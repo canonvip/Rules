@@ -18,6 +18,7 @@ const UnionId = chen.getdata('UnionId');
 console.log(`🔗 捕获：\n${$request.url}`);
 
 const url = $request.url.replace(/https?:\/\//g, '');  // 去掉 URL 中的协议部分（http:// 或 https://）
+let appType = UA.match(/(.+?);/)[1];
 let sku;
 let arr = [];
 
