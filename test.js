@@ -10,9 +10,9 @@ hostname = *.jd.com, *.*.jd.com
 */
 const chen = new Env('')//init()
 // 获取 AppId、AppKey 和 UnionId
-const AppId = chen.getdata('shine_jingPinKU_AppId');
-const AppKey = chen.getdata('shine_jingPinKU_AppKey');
-const UnionId = chen.getdata('shine_jingPinKU_UnionId');
+const AppId = chen.getdata('shine_jingPinKu_AppId');
+const AppKey = chen.getdata('shine_jingPinKu_AppKey');
+const UnionId = chen.getdata('shine_jingPinKu_UnionId');
 console.log(`👾 AppId：${AppId}`);
 console.log(`👾 AppKey：${AppKey}`)
 console.log(`👾 UnionId：${UnionId}`)
