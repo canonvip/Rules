@@ -48,6 +48,13 @@ if (sku) {
 }
 
 function getRebateLink(contentStr, callback) {
+    // 校验必要参数
+    if (!contentStr || !AppId || !AppKey || !UnionId) {
+        console.error("必要的参数缺失：AppId、AppKey、UnionId 或 contentStr");
+        callback(null);  // 如果缺少必要参数，直接回调 null
+        return;
+    }
+
     const url = "https://api.jingpinku.com/get_powerful_coup_link/api";
     const params = {
         appid: AppId,
@@ -56,30 +63,64 @@ function getRebateLink(contentStr, callback) {
         content: contentStr
     };
 
-    chen.get({ url: url, params: params }).then(function(response) {
+    // 发送 GET 请求
+    chen.http.get({ url: url, params: params }).then(function(response) {
         const data = response.body;
+
         try {
+            // 解析 JSON 数据
             const jsonData = JSON.parse(data);
+
+            // 检查返回的数据是否有效
+            if (jsonData.code !== 200) {
+                console.error("API 返回错误：", jsonData);
+                callback(null); // 如果返回码不是 200，调用回调并传 null
+                return;
+            }
+
+            // 构造结果对象
             const result = {
                 code: jsonData.code || 0,
                 content: jsonData.content || "",
                 images: jsonData.images || [],
                 official: jsonData.official || ""
             };
-            // 输出结果到控制台
+
+            // 输出返回数据到控制台
             console.log("API 返回数据：", result);
-            // 如果需要通知
-            $notify("获取优惠链接成功", "", `优惠内容：${result.content}`);
-            callback(result); // 调用回调函数传递数据
+
+            // 如果需要通知（如果环境支持）
+            if (typeof $notify === 'function') {
+                $notify("获取优惠链接成功", "", `优惠内容：${result.content}`);
+            } else {
+                console.log("通知：获取优惠链接成功", `优惠内容：${result.content}`);
+            }
+
+            // 调用回调函数并传递数据
+            callback(result);
+
         } catch (e) {
+            // 捕获 JSON 解析异常
             console.error("解析返回数据失败", e);
-            callback(null); // 出现错误时回调 null
+            callback(null);  // 解析失败时回调 null
         }
+
     }).catch(function(error) {
+        // 捕获请求失败异常
         console.error("请求失败", error);
-        callback(null); // 请求失败时回调 null
+        callback(null);  // 请求失败时回调 null
     });
 }
+
+// 示例调用
+const contentStr = "这里是需要查询的内容";
+getRebateLink(contentStr, function(result) {
+    if (result) {
+        console.log("成功获取优惠链接数据:", result);
+    } else {
+        console.log("获取优惠链接失败");
+    }
+});
 
 // 使用示例
 getRebateLink(productLink, function(result) {
