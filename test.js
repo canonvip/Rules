@@ -40,18 +40,7 @@ if (arr && arr[1]) {
 
 let productLink = sku ? `https://item.m.jd.com/product/${sku}.html` : '';
 console.log("生成的商品链接：", productLink);
-if (sku) {
-    console.log("捕获到商品 SKU，准备调用 getRebateLink...");
-    getRebateLink(productLink, function(result) {
-        if (result) {
-            console.log("获取优惠链接成功，返回的数据：", result);
-        } else {
-            console.log("未能获取到优惠链接");
-        }
-    });
-} else {
-    console.log("未能获取到 SKU，跳过 getRebateLink 调用");
-}
+getRebateLink(productLink, function(result) {
 
 function getRebateLink(contentStr, callback) {
     if (!contentStr || !AppId || !AppKey || !UnionId) {
