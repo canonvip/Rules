@@ -1,24 +1,51 @@
 {
-	"id": "shine.app.sub",
-	"name": "shine订阅",
-	"author": "@shine",
-	"icon": "",
-	"repo": "https://github.com/canonvip/Rules",
-	"apps": [
-		{
-			"id": "jingPinKu",
-			"name": "京品库",
-			"keys": [
-				"AppId",
-				"AppKey",
-				"UnionId"
-			],
-			"author": "@shine",
-			"repo": "https://github.com/canonvip/Rules/raw/refs/heads/main/test.js",
-			"icons": [
-				"https://raw.githubusercontent.com/id77/QuantumultX/master/icon/JDLM.png",
-				"https://raw.githubusercontent.com/id77/QuantumultX/master/icon/JDLM.png"
-			]
-		}
-	]
+  "id": "shine.app.sub",
+  "name": "shine订阅",
+  "author": "@shine",
+  "repo": "https://github.com/canonvip/Rules",
+  "script": "https://github.com/canonvip/Rules/raw/refs/heads/main/test.js",
+  "icons": [
+    "https://raw.githubusercontent.com/id77/QuantumultX/master/icon/JDLM.png",
+    "https://raw.githubusercontent.com/id77/QuantumultX/master/icon/JDLM.png"
+  ],
+  "apps": [
+    {
+      "id": "jingPinKu",
+      "name": "京品库",
+      "keys": [
+        "AppId",
+        "AppKey",
+        "UnionId"
+      ],
+      "author": "@shine",
+      "repo": "https://github.com/canonvip/Rules/raw/refs/heads/main/test.js",
+      "icons": [
+        "https://raw.githubusercontent.com/id77/QuantumultX/master/icon/JDLM.png",
+        "https://raw.githubusercontent.com/id77/QuantumultX/master/icon/JDLM.png"
+      ],
+      "settings": [
+        {
+          "id": "AppId",
+          "name": "AppId",
+          "val": "",
+          "type": "text",
+          "desc": "Your AppId for 京品库"
+        },
+        {
+          "id": "AppKey",
+          "name": "AppKey",
+          "val": "",
+          "type": "text",
+          "desc": "Your AppKey for 京品库"
+        },
+        {
+          "id": "UnionId",
+          "name": "UnionId",
+          "val": "",
+          "type": "text",
+          "desc": "Your UnionId for 京品库"
+        }
+      ]
+    }
+  ]
 }
