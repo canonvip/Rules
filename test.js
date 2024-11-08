@@ -18,7 +18,7 @@ console.log(`🔗 捕获：\n${$request.url}`);
 
 const url = $request.url.replace(/https?:\/\//g, '');  // 去掉 URL 中的协议部分（http:// 或 https://）
 const UA = $request.headers['User-Agent'] || $request.headers['user-agent'];
-let appType = UA.match(/(.+?);/)[1];  // 确保UA已定义
+let appType = UA ? UA.match(/(.+?);/)[1] : "unknown"; //  处理 UA 可能未定义的情况
 let sku;
 let arr = [];
 
@@ -43,24 +43,19 @@ let productLink = sku ? `https://item.m.jd.com/product/${sku}.html` : '';
 console.log(`生成的商品链接：${productLink}`);
 if (productLink) {
     console.log(`调用getRebateLink前: ${productLink}`);
-    console.log("调用getRebateLink前未使用大括号，商品链接为: " + String(productLink));
+    console.log(`调用getRebateLink前未使用大括号，商品链接为: ${productLink}`); // 使用模板字面量
     getRebateLink(productLink);  // 调用异步函数获取优惠链接
 } else {
     console.log("商品链接为空，无法调用 getRebateLink");
+    $done();
 }
-// if (sku) {
-//     $notify('捕获到商品 SKU', '', `商品链接：${productLink}`);
-//     getRebateLink(productLink);  // 调用异步函数获取优惠链接
-// } else {
-//     $notify('未能获取 SKU', '', '无法解析商品 SKU');
-// }
 
 // 异步获取优惠链接的函数
 function getRebateLink(productLink) {
-    let url = {
+    let apiUrl = {  // 更改变量名以避免与外部作用域的 url 变量冲突
         url: 'https://api.jingpinku.com/get_powerful_coup_link/api',
         headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8", // 必须的修正
             "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
             "Accept": "application/json, text/plain, */*",
             "Accept-Encoding": "gzip, deflate, br",
@@ -78,28 +73,27 @@ function getRebateLink(productLink) {
         union_id: UnionId,
         content: productLink
     };
+    const encodedParams = Object.entries(params).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
+    console.log(`调用 getRebateLink，商品链接为: ${productLink}`);  // 使用模板字面量
 
-    console.log("调用 getRebateLink，商品链接为:", productLink);  // 调试输出
+    chen.get({ ...apiUrl, body: encodedParams }, (error, response, data) => { // 使用展开语法和更正后的 Content-Type
+        console.log(`getRebateLink 请求返回: ${JSON.stringify(data)}`); // 字符串化 data 以确保完整输出
 
-    chen.get(url, (error, response, data) => {
-        console.log("getRebateLink 请求返回:", data);  // 调试输出
-
-        // 如果请求失败
-        if (error) {
-            console.error("请求失败", error);
-            chen.msg("获取优惠链接失败", "", `错误信息: ${error}`);
+        if (error || response.statusCode !== 200) { // 检查错误和非 200 状态码
+            const errorMessage = error ? error.toString() : `HTTP 错误：${response.statusCode} ${response.status}`;
+            console.error(`请求失败: ${errorMessage}`);
+            chen.msg("获取优惠链接失败", "", `错误信息: ${errorMessage}`);
             chen.done();
             return;
         }
 
-        // 解析返回的数据
+
         try {
             const result = JSON.parse(data);
             const title = "优惠链接获取";
             let subTitle = '';
             let detail = '';
 
-            // 判断返回结果
             if (result.code == 200) {
                 subTitle = `优惠链接获取成功`;
                 detail = `优惠内容：${result.content}`;
@@ -108,14 +102,13 @@ function getRebateLink(productLink) {
                 detail = `错误信息：${result.message || "未知错误"}`;
             }
 
-            // 使用 chen.msg 发送通知
             chen.msg(title, subTitle, detail);
         } catch (e) {
-            console.error("解析返回数据失败", e);
+            console.error(`解析返回数据失败: ${e.message}`);
             chen.msg("获取优惠链接失败", "", `解析返回数据失败: ${e.message}`);
         }
 
-        chen.done();
+        chen.done(); // 将 $done() 移到回调函数内部
     });
 }
 
