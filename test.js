@@ -42,7 +42,7 @@ let productLink = sku ? `https://item.m.jd.com/product/${sku}.html` : '';
 console.log("生成的商品链接：", productLink);
 if (sku) {
     console.log("捕获到商品 SKU，准备调用 getRebateLink...");
-    getRebateLink(productLink, function(result) {
+    getRebateLink($.{productLink}, function(result) {
         if (result) {
             console.log("获取优惠链接成功，返回的数据：", result);
         } else {
