@@ -71,7 +71,7 @@ function getRebateLink(productLink) {
         content: productLink
     };
 
-    console.log("调用 getRebateLink，商品链接为:", ${productLink});  // 调试输出
+    console.log("调用 getRebateLink，商品链接为:", productLink);  // 调试输出
 
     chen.get(url, (error, response, data) => {
         console.log("getRebateLink 请求返回:", data);  // 调试输出
