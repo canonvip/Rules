@@ -13,13 +13,6 @@ hostname = *.jd.com, *.*.jd.com
 console.log(`🔗 捕获：\n${$request.url}`);
 
 const url = $request.url.replace(/https?:\/\//g, '');  // 去掉 URL 中的协议部分（http:// 或 https://）
-const UA = $request.headers['User-Agent'] || $request.headers['user-agent'] || '';  // 获取请求头中的 User-Agent
-if (!UA) {
-    $notify('错误', '', '无法获取 User-Agent');
-    $done();
-}
-
-let appType = UA.match(/(.+?);/)[1];  // 获取应用类型
 let sku;
 let arr = [];
 
