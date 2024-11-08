@@ -77,7 +77,7 @@ function getRebateLink(productLink) {
                 const finalOutput = `优惠链接: ${rebateLink}\n佣金: ${commission}`;
 
                 // 直接使用 rebateLink 构建 openjd 链接
-                const jdAppLink = `openjd://virtual?params={"category":"jump","des":"m","sourceValue":"babel-act","sourceType":"babel","url":"${rebateLink}"}`;
+                const jdAppLink = `openjd://virtual?params={"category":"jump","des":"m","sourceValue":"babel-act","sourceType":"babel","url":"https://u.jd.com/wO7Aa3c"}`;
 
                 chen.msg("京东优惠信息", "", finalOutput, { "open-url": jdAppLink });
             } else {
