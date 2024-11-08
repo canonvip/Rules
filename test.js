@@ -112,17 +112,6 @@ function getRebateLink(contentStr, callback) {
     });
 }
 
-// 示例调用
-const contentStr = "这里是需要查询的内容";
-getRebateLink(contentStr, function(result) {
-    if (result) {
-        console.log("成功获取优惠链接数据:", result);
-    } else {
-        console.log("获取优惠链接失败");
-    }
-});
-
-// 使用示例
 getRebateLink(productLink, function(result) {
     if (result) {
         console.log("优惠链接数据：", result);
