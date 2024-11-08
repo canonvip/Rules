@@ -76,7 +76,7 @@ function getRebateLink(productLink) {
                     const commissionRate = (commission / price) * 100; // 佣金比例 (百分比)
 
                     // 生成输出文本
-                    const finalOutput = `优惠链接: ${rebateLink}\n💵京东价: ${price}元\n💵佣金: ${commission}元\n💰佣金比例: ${commissionRate.toFixed(2)}%`;
+                    const finalOutput = `💵佣金: ${commission}元\n💰佣金比例: ${commissionRate.toFixed(2)}%\n优惠链接: ${rebateLink}`;
 
                     // 构建 openjd 链接
                     const openjdParams = {
