@@ -39,16 +39,12 @@ if (arr && arr[1]) {
 }
 
 let productLink = sku ? `https://item.m.jd.com/product/${sku}.html` : '';
+console.log(`生成的商品链接：${productLink}`);
 if (sku) {
     $notify('捕获到商品 SKU', '', `商品链接：${productLink}`);
+    getRebateLink(productLink);  // 调用异步函数获取优惠链接
 } else {
     $notify('未能获取 SKU', '', '无法解析商品 SKU');
-}
-console.log("生成的商品链接：", productLink);
-
-// 调用 getRebateLink 获取优惠链接
-if (productLink) {
-    getRebateLink(productLink); // 调用异步函数获取优惠链接
 }
 
 // 异步获取优惠链接的函数
@@ -75,7 +71,11 @@ function getRebateLink(productLink) {
         content: productLink
     };
 
+    console.log("调用 getRebateLink，商品链接为:", productLink);  // 调试输出
+
     chen.get(url, (error, response, data) => {
+        console.log("getRebateLink 请求返回:", data);  // 调试输出
+
         // 如果请求失败
         if (error) {
             console.error("请求失败", error);
@@ -110,6 +110,7 @@ function getRebateLink(productLink) {
         chen.done();
     });
 }
+
 
 
 //Compatible code from https://github.com/chavyleung/scripts/blob/master/Env.min.js
