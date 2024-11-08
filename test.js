@@ -8,7 +8,7 @@ https:\/\/.+\.jd\.com\/product\/.*\/(\d+)\.html url script-request-header https:
 [mitm]
 hostname = *.jd.com, *.*.jd.com
 */
-const chen = new Env('')//init()
+const chen = new Env('京品库')//init()
 // 获取 AppId、AppKey 和 UnionId
 const AppId = chen.getdata('AppId');
 const AppKey = chen.getdata('AppKey');
