@@ -40,7 +40,7 @@ if (arr && arr[1]) {
 
 let productLink = sku ? `https://item.m.jd.com/product/${sku}.html` : '';
 console.log("生成的商品链接：", productLink);
-getRebateLink(productLink, function(result) {
+getRebateLink(${productLink}, function(result) {
 
 function getRebateLink(contentStr, callback) {
     if (!contentStr || !AppId || !AppKey || !UnionId) {
