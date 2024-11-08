@@ -39,7 +39,7 @@ if (arr && arr[1]) {
 }
 
 let productLink = sku ? `https://item.m.jd.com/product/${sku}.html` : '';
-console.log("生成的商品链接：", productLink);
+console.log("生成的商品链接：", ${productLink});
 
 // 确保 getRebateLink 是一个异步操作
 getRebateLink(productLink).then(result => {
