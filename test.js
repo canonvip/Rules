@@ -39,6 +39,11 @@ if (arr && arr[1]) {
 }
 
 let productLink = sku ? `https://item.m.jd.com/product/${sku}.html` : '';
+if (sku) {
+    $notify('捕获到商品 SKU', '', `商品链接：${productLink}`);
+} else {
+    $notify('未能获取 SKU', '', '无法解析商品 SKU');
+}
 console.log("生成的商品链接：", productLink);
 
 // 调用 getRebateLink 获取优惠链接
