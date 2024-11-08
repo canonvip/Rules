@@ -42,45 +42,63 @@ if (productLink) {
 }
 // 异步获取优惠链接的函数
 function getRebateLink(productLink) {
-    let apiUrl = {  // 更改变量名以避免与外部作用域的 url 变量冲突
+    let apiUrl = {
         url: 'https://api.jingpinku.com/get_powerful_coup_link/api',
     };
-    // 请求参数
+
     const params = {
         appid: AppId,
         appkey: AppKey,
         union_id: UnionId,
         content: productLink
     };
-    const encodedParams = Object.entries(params).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
-    console.log(`调用 getRebateLink，商品链接为: ${productLink}`);  // 使用模板字面量
-    chen.get({ ...apiUrl, body: encodedParams }, (error, response, data) => { // 使用展开语法和更正后的 Content-Type
-        console.log(`getRebateLink 请求返回: ${JSON.stringify(data)}`); // 字符串化 data 以确保完整输出
-        if (error || response.statusCode !== 200) { // 检查错误和非 200 状态码
-            const errorMessage = error ? error.toString() : `HTTP 错误：${response.statusCode} ${response.status}`;
-            console.error(`请求失败: ${errorMessage}`);
-            chen.msg("获取优惠链接失败", "", `错误信息: ${errorMessage}`);
+
+    const encodedParams = Object.entries(params)
+        .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+        .join('&');
+
+    console.log(`调用 getRebateLink，商品链接为: ${productLink}`);
+
+    // 启动计时器以检测过长的延迟
+    let timeoutTimer = setTimeout(() => {
+        console.error("API 请求超时！");
+        chen.msg("获取优惠链接失败", "", "API 请求超时");
+        chen.done(); // 超时终止
+    }, 10000); // 10 秒后超时（根据需要调整）
+
+
+
+    chen.get({ ...apiUrl, body: encodedParams, timeout: 10000 }, (error, response, data) => {
+        clearTimeout(timeoutTimer); // 如果请求完成，则清除超时
+
+        console.log(`API 请求完成，状态码：${response ? response.statusCode : "未知"}`); // 检查响应是否存在
+
+
+        if (error) {
+            console.error(`请求失败: ${error}`);
+            chen.msg("获取优惠链接失败", "", `错误信息: ${error}`);
             chen.done();
             return;
         }
+
+        if (response && response.statusCode !== 200) {
+            console.error(`HTTP 错误：${response.statusCode} ${response.status}`);
+            chen.msg("获取优惠链接失败", "", `HTTP 错误：${response.statusCode} ${response.status}`);
+            chen.done();
+            return;
+        }
+
+        console.log(`getRebateLink 原始返回数据: ${JSON.stringify(data)}`); // 记录解析前的原始数据
+
         try {
             const result = JSON.parse(data);
-            const title = "优惠链接获取";
-            let subTitle = '';
-            let detail = '';
-            if (result.code == 200) {
-                subTitle = `优惠链接获取成功`;
-                detail = `优惠内容：${result.content}`;
-            } else {
-                subTitle = `优惠链接获取失败`;
-                detail = `错误信息：${result.message || "未知错误"}`;
-            }
-            chen.msg(title, subTitle, detail);
+            // ... （你的代码其余部分，用于处理结果）
         } catch (e) {
             console.error(`解析返回数据失败: ${e.message}`);
             chen.msg("获取优惠链接失败", "", `解析返回数据失败: ${e.message}`);
+        } finally {
+           chen.done(); // 确保即使出现错误也调用 $done()
         }
-        chen.done(); // 将 $done() 移到回调函数内部
     });
 }
 //Compatible code from https://github.com/chavyleung/scripts/blob/master/Env.min.js
