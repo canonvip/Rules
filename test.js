@@ -40,54 +40,66 @@ if (arr && arr[1]) {
 
 let productLink = sku ? `https://item.m.jd.com/product/${sku}.html` : '';
 console.log("生成的商品链接：", productLink);
-getRebateLink(${productLink}, function(result) {
 
-function getRebateLink(contentStr, callback) {
-    if (!contentStr || !AppId || !AppKey || !UnionId) {
-        console.error("必要的参数缺失：AppId、AppKey、UnionId 或 contentStr");
-        callback(null);
-        return;
-    }
-
-    const url = "https://api.jingpinku.com/get_powerful_coup_link/api";
-    const params = {
-        appid: AppId,
-        appkey: AppKey,
-        union_id: UnionId,
-        content: contentStr
-    };
-
-    chen.http.get({ url: url, params: params }).then(function(response) {
-        const data = response.body;
-        console.log("API 请求成功，返回数据：", data);
-        try {
-            const jsonData = JSON.parse(data);
-            if (jsonData.code !== 200) {
-                console.error("API 返回错误：", jsonData);
-                callback(null);
-                return;
-            }
-
-            const result = {
-                code: jsonData.code || 0,
-                content: jsonData.content || "",
-                images: jsonData.images || [],
-                official: jsonData.official || ""
-            };
-
-            console.log("API 返回数据：", result);
-            if (typeof $notify === 'function') {
-                $notify("获取优惠链接成功", "", `优惠内容：${result.content}`);
-            }
-            callback(result);
-
-        } catch (e) {
-            console.error("解析返回数据失败", e);
-            callback(null);
+// 确保 getRebateLink 是一个异步操作
+getRebateLink(productLink).then(result => {
+    if (result) {
+        // 返回数据处理
+        console.log("优惠链接：", result.content);
+        if (typeof $notify === 'function') {
+            $notify("获取优惠链接成功", "", `优惠内容：${result.content}`);
         }
-    }).catch(function(error) {
-        console.error("请求失败", error);
-        callback(null);
+    } else {
+        console.log("没有获取到优惠链接！");
+    }
+}).catch(error => {
+    console.error("获取优惠链接失败", error);
+});
+
+// 获取优惠链接的异步函数
+function getRebateLink(contentStr) {
+    return new Promise((resolve, reject) => {
+        if (!contentStr || !AppId || !AppKey || !UnionId) {
+            console.error("必要的参数缺失：AppId、AppKey、UnionId 或 contentStr");
+            return reject("缺少必要参数");
+        }
+
+        const url = "https://api.jingpinku.com/get_powerful_coup_link/api";
+        const params = {
+            appid: AppId,
+            appkey: AppKey,
+            union_id: UnionId,
+            content: contentStr
+        };
+
+        chen.http.get({ url: url, params: params }).then(function(response) {
+            const data = response.body;
+            console.log("API 请求成功，返回数据：", data);
+            try {
+                const jsonData = JSON.parse(data);
+                if (jsonData.code !== 200) {
+                    console.error("API 返回错误：", jsonData);
+                    return reject("API 返回错误");
+                }
+
+                const result = {
+                    code: jsonData.code || 0,
+                    content: jsonData.content || "",
+                    images: jsonData.images || [],
+                    official: jsonData.official || ""
+                };
+
+                console.log("API 返回数据：", result);
+                resolve(result);
+
+            } catch (e) {
+                console.error("解析返回数据失败", e);
+                reject("解析失败");
+            }
+        }).catch(function(error) {
+            console.error("请求失败", error);
+            reject("请求失败");
+        });
     });
 }
 //Compatible code from https://github.com/chavyleung/scripts/blob/master/Env.min.js
