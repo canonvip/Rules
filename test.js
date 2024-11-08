@@ -14,8 +14,8 @@ const AppId = chen.getData('shine_jingPinKU_AppId');
 const AppKey = chen.getData('shine_jingPinKU_AppKey');
 const UnionId = chen.getData('shine_jingPinKU_UnionId');
 console.log(`👾 AppId：${AppId}`);
-console.log(`👾 AppKey：${AppKey}`)
-console.log(`👾 UnionId：${UnionId}`)
+console.log(`👾 AppKey：${AppKey}`);
+console.log(`👾 UnionId：${UnionId}`);
 
 // 输出捕获的请求 URL
 console.log(`🔗 捕获：\n${$request.url}`);
