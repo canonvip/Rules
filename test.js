@@ -8,8 +8,7 @@ https:\/\/.+\.jd\.com\/product\/.*\/(\d+)\.html url script-request-header https:
 [mitm]
 hostname = *.jd.com, *.*.jd.com
 */
-const chen = new Env('京品库')//init()
-// 获取 AppId、AppKey 和 UnionId
+const chen = new Env('京品库'); // 初始化
 const AppId = chen.getdata('AppId');
 const AppKey = chen.getdata('AppKey');
 const UnionId = chen.getdata('UnionId');
@@ -18,14 +17,14 @@ const UnionId = chen.getdata('UnionId');
 console.log(`🔗 捕获：\n${$request.url}`);
 
 const url = $request.url.replace(/https?:\/\//g, '');  // 去掉 URL 中的协议部分（http:// 或 https://）
-let appType = UA.match(/(.+?);/)[1];
+let appType = UA.match(/(.+?);/)[1];  // 确保UA已定义
 let sku;
 let arr = [];
 
 // 根据不同的 URL 模式匹配 SKU
 if (url.includes('graphext/draw')) {
     arr = url.match(/sku=(\d+)/);
-    appType = 'jdpingou';  // 设置应用类型为 'jdpingou'
+    appType = 'jdpingou';
 } else if (url.includes('wqsitem.jd.com/detail')) {
     arr = url.match(/wqsitem\.jd\.com\/detail\/(\d+)_/);
 } else {
@@ -34,7 +33,6 @@ if (url.includes('graphext/draw')) {
 
 if (arr && arr[1]) {
     sku = arr[1];
-    // console.log(`👾 SKU：${sku}`);
 } else {
     console.log('👾 未能匹配到 SKU');
 }
@@ -43,7 +41,7 @@ let productLink = sku ? `https://item.m.jd.com/product/${sku}.html` : '';
 console.log("生成的商品链接：", productLink);
 if (sku) {
     console.log("捕获到商品 SKU，准备调用 getRebateLink...");
-    getRebateLink(${productLink}, function(result) {
+    getRebateLink(productLink, function(result) {
         if (result) {
             console.log("获取优惠链接成功，返回的数据：", result);
         } else {
@@ -55,10 +53,9 @@ if (sku) {
 }
 
 function getRebateLink(contentStr, callback) {
-    // 校验必要参数
     if (!contentStr || !AppId || !AppKey || !UnionId) {
         console.error("必要的参数缺失：AppId、AppKey、UnionId 或 contentStr");
-        callback(null);  // 如果缺少必要参数，直接回调 null
+        callback(null);
         return;
     }
 
@@ -70,21 +67,17 @@ function getRebateLink(contentStr, callback) {
         content: contentStr
     };
 
-    // 发送 GET 请求
     chen.http.get({ url: url, params: params }).then(function(response) {
         const data = response.body;
         console.log("API 请求成功，返回数据：", data);
         try {
             const jsonData = JSON.parse(data);
-
-            // 检查返回的数据是否有效
             if (jsonData.code !== 200) {
                 console.error("API 返回错误：", jsonData);
-                callback(null); // 返回非200时，直接回调 null
+                callback(null);
                 return;
             }
 
-            // 构造结果对象
             const result = {
                 code: jsonData.code || 0,
                 content: jsonData.content || "",
@@ -100,11 +93,11 @@ function getRebateLink(contentStr, callback) {
 
         } catch (e) {
             console.error("解析返回数据失败", e);
-            callback(null);  // 解析失败时回调 null
+            callback(null);
         }
     }).catch(function(error) {
         console.error("请求失败", error);
-        callback(null);  // 请求失败时回调 null
+        callback(null);
     });
 }
 //Compatible code from https://github.com/chavyleung/scripts/blob/master/Env.min.js
