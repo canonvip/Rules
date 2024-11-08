@@ -43,7 +43,7 @@ let productLink = sku ? `https://item.m.jd.com/product/${sku}.html` : '';
 console.log(`生成的商品链接：${productLink}`);
 if (productLink) {
     console.log(`调用getRebateLink前: ${productLink}`);
-    console.log("调用getRebateLink前未使用大括号，商品链接为:", productLink);
+    console.log("调用getRebateLink前未使用大括号，商品链接为: " + String(productLink));
     getRebateLink(productLink);  // 调用异步函数获取优惠链接
 } else {
     console.log("商品链接为空，无法调用 getRebateLink");
