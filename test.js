@@ -42,7 +42,7 @@ let productLink = sku ? `https://item.m.jd.com/product/${sku}.html` : '';
 console.log("生成的商品链接：", ${productLink});
 
 // 确保 getRebateLink 是一个异步操作
-getRebateLink(${productLink}).then(result => {
+getRebateLink(productLink).then(result => {
     if (result) {
         // 返回数据处理
         console.log("优惠链接：", result.content);
