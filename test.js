@@ -66,33 +66,33 @@ function getRebateLink(productLink) {
             return;
         }
 
-        try {
-            const result = JSON.parse(data);
-            if (result && result.content && result.official) {
-                const rebateLink = result.content;
-                const commissionMatch = result.official.match(/佣金：([\d.]+)/);
+    try {
+        const result = JSON.parse(data);
+        if (result && result.content && result.official) {
+            const rebateLink = result.content;
+            const commissionMatch = result.official.match(/佣金：([\d.]+)/);
 
-                if (commissionMatch && commissionMatch[1]) {
-                    const commission = commissionMatch[1];
-                    
-                    // 构造京东APP的Scheme URL，点击通知后可以打开京东APP
-                    const jdAppLink = `openjd://virtual?params={"category":"jump","des":"m","sourceValue":"babel-act","sourceType":"babel","url":"${rebateLink}"}`;
-                    
-                    const finalOutput = `优惠链接: ${rebateLink}\n佣金: ${commission}`;
-                    chen.msg("京东优惠信息", "", finalOutput, { "open-url": jdAppLink });
-                } else {
-                    chen.msg("获取优惠信息失败", "", "未能从 official 字段提取佣金信息");
-                }
+            if (commissionMatch && commissionMatch[1]) {
+                const commission = commissionMatch[1];
+                const finalOutput = `优惠链接: ${rebateLink}\n佣金: ${commission}`;
+
+                // 直接使用 rebateLink 构建 openjd 链接
+                const jdAppLink = `openjd://virtual?params={"category":"jump","des":"m","sourceValue":"babel-act","sourceType":"babel","url":"${rebateLink}"}`;
+
+                chen.msg("京东优惠信息", "", finalOutput, { "open-url": jdAppLink });
             } else {
-                chen.msg("获取优惠信息失败", "", "返回的数据中缺少 content 或 official 字段");
+                chen.msg("获取优惠信息失败", "", "未能从 official 字段提取佣金信息");
             }
-        } catch (e) {
-            console.error(`解析返回数据失败: ${e.message}`);
-            chen.msg("获取优惠链接失败", "", `解析返回数据失败: ${e.message}`);
-        } finally {
-            chen.done();
+        } else {
+            chen.msg("获取优惠信息失败", "", "返回的数据中缺少 content 或 official 字段");
         }
-    });
+    } catch (e) {
+        console.error(`解析返回数据失败: ${e.message}`);
+        chen.msg("获取优惠链接失败", "", `解析返回数据失败: ${e.message}`);
+    } finally {
+        chen.done();
+    }
+});
 }
 
 //Compatible code from https://github.com/chavyleung/scripts/blob/master/Env.min.js
