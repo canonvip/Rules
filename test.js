@@ -49,6 +49,51 @@ if (sku) {
 } else {
     $notify('未能获取 SKU', '', '无法解析商品 SKU');
 }
+
+function getRebateLink(contentStr, callback) {
+    const url = "https://api.jingpinku.com/get_powerful_coup_link/api";
+    const params = {
+        appid: AppId,
+        appkey: AppKey,
+        union_id: UnionId,
+        content: contentStr
+    };
+
+    chen.get({ url: url, params: params }).then(function(response) {
+        const data = response.body;
+        try {
+            const jsonData = JSON.parse(data);
+            const result = {
+                code: jsonData.code || 0,
+                content: jsonData.content || "",
+                images: jsonData.images || [],
+                official: jsonData.official || ""
+            };
+            // 输出结果到控制台
+            console.log("API 返回数据：", result);
+            // 如果需要通知
+            $notify("获取优惠链接成功", "", `优惠内容：${result.content}`);
+            callback(result); // 调用回调函数传递数据
+        } catch (e) {
+            console.error("解析返回数据失败", e);
+            callback(null); // 出现错误时回调 null
+        }
+    }).catch(function(error) {
+        console.error("请求失败", error);
+        callback(null); // 请求失败时回调 null
+    });
+}
+
+// 使用示例
+getRebateLink(productLink, function(result) {
+    if (result) {
+        console.log("优惠链接数据：", result);
+        // 你可以在这里根据返回的 result 继续处理或通知用户
+    } else {
+        console.log("未能获取到优惠链接");
+    }
+});
+
  function init() {
     isSurge = () => {
       return undefined === this.$httpClient ? false : true
