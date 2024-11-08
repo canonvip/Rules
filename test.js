@@ -54,16 +54,6 @@ if (productLink) {
 function getRebateLink(productLink) {
     let apiUrl = {  // 更改变量名以避免与外部作用域的 url 变量冲突
         url: 'https://api.jingpinku.com/get_powerful_coup_link/api',
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8", // 必须的修正
-            "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
-            "Accept": "application/json, text/plain, */*",
-            "Accept-Encoding": "gzip, deflate, br",
-            "Accept-Language": "en-us",
-            "Origin": "https://btfront.jd.com",
-            "Host": "api.jingpinku.com",
-            "Connection": "keep-alive"
-        }
     };
 
     // 请求参数
